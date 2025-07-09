@@ -6,7 +6,6 @@ curl http://localhost:9200
 brew install elastic/tap/kibana-full
 
 kibana
-
 http://localhost:5601
 
 brew install elastic/tap/logstash-full
