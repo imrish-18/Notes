@@ -122,15 +122,6 @@ Match documents where at least one array element satisfies multiple conditions.
 db.MovieInfo.find({ cast: { $elemMatch: { $eq: "Leonardo DiCaprio" } } });
 
 
-
-
-token
-
-
-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
-
-
-
 db.createUser({
     user: "rishabh",
     pwd: "password",
