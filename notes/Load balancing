@@ -1,0 +1,82 @@
+Load balancing is a key concept in system design that ensures efficient distribution of incoming traffic or workloads across multiple servers or resources. The goal is to maximize throughput, minimize response time, and avoid overloading any single resource.
+
+🔄 What Is Load Balancing?
+Load balancing refers to the process of distributing incoming network traffic across multiple servers (also called nodes or instances) so that no single server bears too much demand. It is critical for building scalable and highly available systems.
+
+
+✅ Why Load Balancing?
+⚖️ Even distribution of load
+
+🚀 Improved performance and faster responses
+
+🛡️ Fault tolerance & high availability
+
+📈 Scalability—handle more users by adding more servers
+
+🧠 Health checks—route traffic only to healthy nodes
+
+🧠 Types of Load Balancers
+1. Hardware Load Balancers
+Physical devices (expensive and used in large enterprises)
+
+Example: F5 Big-IP, Cisco
+
+2. Software Load Balancers
+Run on commodity hardware or VMs
+
+Examples: Nginx, HAProxy, Envoy
+
+3. Cloud-based Load Balancers
+Managed by cloud providers
+
+Examples: AWS ELB, Azure Load Balancer, GCP Load Balancing
+
+
+🌐 Load Balancing      Algorithms
+Algorithm	            Description
+Round Robin	            Requests are distributed sequentially across servers
+Least Connections	    New requests go to the server with the fewest active connections
+IP Hash	                Hash of the client IP decides which server handles the request
+Weighted	            Some servers get more traffic based on their "weight" (capacity)
+Random	                Requests are sent to random servers
+Consistent Hashing	    Helps maintain cache locality or session affinity
+
+
+📦 Where Load Balancers Sit in Architecture
+Client
+
+Load Balancer
+
+Web/Application Servers
+
+Database
+
+Optional: Multiple layers of load balancers (L4, L7)
+
+
+🧱 Types of Load Balancing by Layer
+Layer 4 (Transport Layer): Based on TCP/UDP (e.g., IP + Port)
+
+Layer 7 (Application Layer): Based on content (e.g., URL, headers, cookies)
+
+⚙️ Examples in System Design
+Web App: A load balancer distributes traffic to multiple application servers.
+
+Microservices: API Gateway or service mesh (e.g., Istio) handles load balancing.
+
+Database: Read replicas can be load balanced for read-heavy systems.
+
+💡 Best Practices
+Use health checks
+
+Implement failover mechanisms
+
+Monitor server loads and scale horizontally
+
+Combine with auto-scaling
+
+Handle sticky sessions if needed
+
+
+
+

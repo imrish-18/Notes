@@ -1,0 +1,137 @@
+Java 17 
+Java 17, released in September 2021, is a Long-Term Support (LTS) version, bringing significant improvements, new features, and performance enhancements. Here are the key features:
+
+1. Sealed Classes (Finalized)
+Sealed classes allow you to control which classes can extend or implement them.
+
+Sealed classes were introduced as a preview feature in Java 15 and finalized in Java 17. They allow developers to restrict which classes can extend or implement a class or interface, providing better control over inheritance.
+1. Why Use Sealed Classes?
+🔹 Prevents unwanted subclassing.
+🔹 Provides a clear hierarchy for better maintainability.
+🔹 Improves security and performance by limiting polymorphism.
+🔹 Helps the compiler with exhaustive pattern matching (useful for switch expressions).
+5. When to Use Sealed Classes?
+✅ When you want controlled inheritance (e.g., defining a strict class hierarchy).
+✅ When designing frameworks and APIs that should limit subclassing.
+✅ When using pattern matching for better compile-time safety.
+
+6. When NOT to Use Sealed Classes?
+🚫 If your class is meant to be extended freely by other developers.
+🚫 If you don't need strict control over the inheritance tree.
+
+sealed class Vehicle permits Car, Truck {}
+
+final class Car extends Vehicle {}
+final class Truck extends Vehicle {}
+
+ Why? Restricts unwanted subclassing and improves code safety.
+
+
+
+ 2. Pattern Matching for switch (Preview)
+Enhances switch to support pattern matching.
+static void printType(Object obj) {
+    switch (obj) {
+        case Integer i -> System.out.println("Integer: " + i);
+        case String s -> System.out.println("String: " + s);
+        default -> System.out.println("Other type");
+    }
+}
+
+🔹 Why? More readable and flexible switch statements.
+
+
+3. Records (Finalized)
+Records reduce boilerplate by auto-generating constructors, getters, toString(), equals(), and hashCode().
+
+record Person(String name, int age) {}
+
+Person p = new Person("Alice", 25);
+System.out.println(p.name());  // No need for getters
+
+
+4. New instanceof Pattern Matching
+Simplifies instanceof checks.
+
+if (obj instanceof String s) {
+    System.out.println(s.toUpperCase()); // No need for explicit casting
+}
+
+🔹 Why? Reduces redundant casting.
+
+
+
+5. Enhanced switch Expressions
+Introduces arrow syntax and yield statements.
+Difference Between Old and New switch in Java
+Java 12+ introduced enhanced switch expressions, making switch more powerful, concise, and useful in functional programming.
+int result = switch (day) {
+    case MONDAY, FRIDAY -> 6;
+    case SATURDAY, SUNDAY -> 10;
+    default -> 5;
+};
+
+🔹 Why? More concise and readable switch statements.
+
+When to Use Which?
+✅ Use new switch (expression) when:
+
+You need a concise, value-returning switch.
+You want to avoid fall-through.
+You prefer functional-style programming.
+✅ Use old switch (statement) when:
+
+You don’t need to return values.
+You need complex logic inside case blocks.
+Why yield?
+yield is required when using block cases ({}) because it explicitly returns a value.
+public class YieldSwitchExample {
+    public static void main(String[] args) {
+        int day = 3;
+
+        String dayType = switch (day) {
+            case 1, 2, 3, 4, 5 -> "Weekday";
+            case 6, 7 -> {
+                System.out.println("It's a weekend!");
+                yield "Weekend";  // Returns a value
+            }
+            default -> "Invalid day";
+        };
+
+        System.out.println(dayType);  // Output: Weekday
+    }
+}
+
+
+6. Strongly Encapsulated JDK Internals
+JDK internal APIs (like sun.misc.Unsafe) are now strongly encapsulated by default.
+
+🔹 Why? Improves security and maintainability.
+
+
+7. New macOS AArch64 Support
+Java 17 adds native support for Apple Silicon (M1/M2 chips).
+
+🔹 Why? Better performance on new MacBooks.
+
+8. Deprecation and Removal of Old Features
+Removed: Security Manager (was deprecated in Java 15).
+Removed: RMI Activation System.
+Deprecated: Finalization (will be removed in future versions).
+🔹 Why? Cleaner and more maintainable Java.
+
+
+
+9. Foreign Function & Memory API (Preview)
+Allows Java to interact with native libraries without JNI.
+
+🔹 Why? Faster and safer native interactions.
+
+
+
+
+10. Performance & Garbage Collection Improvements
+G1 GC & ZGC Enhancements – Lower latency and improved performance.
+Better NUMA Awareness – Improved CPU and memory efficiency.
+🔹 Why? Faster execution and lower memory overhead.
+

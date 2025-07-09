@@ -1,0 +1,116 @@
+✅ Why Reactive & Event-Driven?
+Traditional (Servlet-based) apps use one thread per request. In high-load scenarios, this leads to thread exhaustion.
+
+Reactive systems (e.g., using Spring WebFlux) use non-blocking I/O to serve thousands of concurrent requests using fewer threads, improving scalability and resource efficiency.
+
+
+
+✅ Technologies You’ll Use
+
+Tool/Tech	Purpose
+Spring WebFlux	Reactive programming framework
+Project Reactor	Reactive Streams implementation
+MongoDB Reactive	Non-blocking DB interaction
+Kafka / RabbitMQ	Event-driven messaging
+Lombok	Boilerplate code reduction
+
+
+
+✅ Core Concepts in Spring WebFlux
+Mono<T> – A single value or empty (like Optional<T>).
+
+Flux<T> – A stream of 0..N values (like List<T>).
+
+Schedulers – Thread pools used for reactive execution.
+
+Backpressure – Controlling data flow under heavy load.
+
+
+✅ Project Reactor Internals and Backpressure – Deep Dive
+Understanding Project Reactor (used by Spring WebFlux) and backpressure is essential for building efficient reactive and asynchronous applications.
+
+📦 What is Project Reactor?
+Project Reactor is a Reactive Streams-compliant library for building non-blocking applications on the JVM. It’s the core of Spring WebFlux.
+
+Core Types:
+
+Type	Description
+Mono<T>	0 or 1 item
+Flux<T>	0 to N items
+⚙️ Reactor Internals – Simplified
+1. Publisher & Subscriber
+At the core is the Reactive Streams model:
+
+Publisher: Emits data
+
+Subscriber: Consumes data
+
+Subscription: Manages the link (including backpressure)
+
+Processor: Combines both Publisher and Subscriber
+
+Reactor uses Mono and Flux as Publishers.
+
+💥 What is Backpressure?
+Backpressure is a mechanism to handle data overload—it lets the consumer control the rate of data flow from the producer.
+
+Why it matters?
+Without backpressure:
+
+A fast producer can overwhelm a slow consumer.
+
+This can lead to memory issues or crashes.
+
+🔄 How Reactor Handles Backpressure
+Reactor implements backpressure via the request(n) method in the Subscription.
+
+Consumers request n items.
+
+The source emits only n items.
+
+If no request is made → no data is emitted.
+
+Reactor does this behind the scenes with operators like onBackpressureBuffer() and onBackpressureDrop().
+
+🔧 Example: Custom Backpressure Control
+java
+Copy
+Edit
+Flux<Integer> source = Flux.range(1, 1000)
+    .log()
+    .onBackpressureBuffer(10, i -> System.out.println("Dropped: " + i));
+
+source
+    .subscribe(
+        data -> {
+            try {
+                Thread.sleep(50); // simulate slow consumer
+                System.out.println("Received: " + data);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        },
+        err -> System.out.println("Error: " + err),
+        () -> System.out.println("Done")
+    );
+What happens here?
+The producer emits 1000 integers.
+
+The subscriber processes slowly.
+
+Reactor buffers up to 10 items, then starts dropping and printing the dropped ones.
+
+🚦 Operators for Backpressure Handling
+
+Operator	Behavior
+onBackpressureBuffer()	Buffers items when overwhelmed
+onBackpressureDrop()	Drops items if consumer is slow
+onBackpressureLatest()	Keeps the latest item, drops others
+🚀 Best Practices
+Don’t block in reactive chains (Thread.sleep, JDBC, etc).
+
+Use .limitRate(n) or .delayElements() to simulate and manage flow.
+
+Apply Schedulers.boundedElastic() for blocking work.
+
+Monitor with .log() or .doOnNext() during development.

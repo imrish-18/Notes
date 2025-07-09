@@ -1,0 +1,160 @@
+Here’s a concise overview of key Java 21 features:
+
+🚀 Key Features in Java 21
+Virtual Threads (JEP 444 - Stable)
+
+Lightweight threads that drastically improve concurrency without complex thread pool management.
+Ideal for high-throughput applications, like servers handling numerous simultaneous requests.
+Pattern Matching for Switch (JEP 441 - Stable)
+
+Enhances switch with pattern matching for cleaner and safer code.
+Supports type patterns, null handling, and guards in switch expressions.
+Record Patterns (JEP 440 - Stable)
+
+Introduces pattern matching for records to simplify data extraction.
+Enhances readability when dealing with nested data structures.
+Sequenced Collections (JEP 431 - Stable)
+
+Introduces new interfaces like SequencedCollection, SequencedSet, and SequencedMap.
+Provides better control over element ordering.
+Scoped Values (JEP 446 - Preview)
+
+An alternative to ThreadLocal for sharing immutable data efficiently across threads.
+Structured Concurrency (JEP 453 - Preview)
+
+Simplifies concurrent programming by grouping related tasks, improving reliability and error handling.
+Unnamed Classes and Instance Main Methods (JEP 445 - Preview)
+
+Simplifies writing small Java programs by allowing unnamed classes and reducing boilerplate code.
+Foreign Function & Memory API (JEP 454 - Stable)
+
+Provides a safer and easier way to interact with native code, replacing JNI.
+Generational ZGC (JEP 439 - Stable)
+
+Enhances the Z Garbage Collector for improved performance and reduced latency.
+String Templates (JEP 430 - Preview)
+
+Introduces flexible and secure string interpolation for dynamic content creation.
+🔥 Key Highlights for Developers
+✅ Improved concurrency with Virtual Threads.
+✅ Enhanced readability using Pattern Matching.
+✅ Cleaner code with Record Patterns and String Templates.
+✅ Better performance with Generational ZGC.
+
+Would you like code examples or practical use cases for specific features? 😊
+
+
+
+
+
+
+
+Pattern Matching for Switch (JEP 441) - Java 21
+Pattern Matching for switch introduces a more powerful and flexible way to handle complex conditions in switch statements and expressions. It simplifies code by integrating pattern matching directly into the switch construct, improving readability, safety, and robustness.
+
+ Key Enhancements in JEP 441
+Type Patterns in switch
+Null Handling in switch
+Guarded Patterns (With Conditions)
+Exhaustiveness Checking
+1️⃣ Type Patterns in switch
+You can now directly test the type of an object and safely access its properties in one step — no need for manual casting.
+Guarded Patterns (With Conditions)
+Add extra conditions within your pattern matching to refine logic.
+void classifyNumber(Number num) {
+    switch (num) {
+        case Integer i when i > 0 -> System.out.println("Positive Integer");
+        case Integer i when i < 0 -> System.out.println("Negative Integer");
+        case Double d when d > 0.0 -> System.out.println("Positive Double");
+        default -> System.out.println("Unknown or Zero");
+    }
+}
+
+
+
+
+Sequenced Collections (JEP 431) - Java 21
+The Sequenced Collections API introduces new interfaces to provide better control over element ordering in Java collections. This enhancement improves the usability of collections that maintain a defined order, such as List, Deque, and LinkedHashMap.
+🚀 New Interfaces Introduced
+Java 21 adds three new interfaces under the java.util package:
+
+SequencedCollection<E>
+SequencedSet<E>
+SequencedMap<K, V>
+
+
+
+
+
+🔍 Key Features of Sequenced Collections
+✅ Unified API for accessing and modifying elements at the beginning and end of collections.
+✅ Improved bidirectional iteration support.
+✅ Enhances consistency across ordered collections like LinkedHashMap and ArrayDeque.
+
+
+
+ Key Methods in Sequenced Collections
+getFirst() / getLast() → Access the first or last element.
+addFirst() / addLast() → Insert elements at the start or end.
+removeFirst() / removeLast() → Remove elements from the start or end.
+reversed() → Returns a reverse view of the collection without copying data.
+
+⚠️ Key Notes
+✅ SequencedCollection, SequencedSet, and SequencedMap provide consistent APIs for handling ordered collections.
+✅ The reversed() method offers a lazy view, improving performance by avoiding data copying.
+✅ Ideal for scenarios where first and last element manipulation is common.
+
+🔥 When to Use Sequenced Collections?
+✅ Managing ordered data efficiently.
+✅ Performing frequent first/last element operations.
+✅ Iterating in reverse order without manual logic.
+
+Would you like examples for specific use cases like pagination, caching, or queue implementations?
+
+
+
+
+
+🚀 Scoped Values (JEP 446 - Preview) - Java 21
+Scoped Values provide a better alternative to ThreadLocal for sharing immutable data between threads in a safe, efficient, and structured manner.
+
+🔎 Why Scoped Values?
+While ThreadLocal is useful for thread-specific data, it has some key issues:
+❗ Potential memory leaks if values are not properly removed.
+❗ Data can be modified unexpectedly, leading to bugs.
+❗ Difficult to manage in asynchronous or structured concurrency scenarios.
+
+Scoped Values address these problems by:
+✅ Ensuring data is immutable (no accidental changes).
+✅ Offering improved performance with reduced memory footprint.
+✅ Being inherently compatible with structured concurrency (safer parallel execution).
+
+
+import java.lang.ScopedValue;
+
+public class ScopedValueDemo {
+    // Step 1: Declare a Scoped Value (Immutable)
+    private static final ScopedValue<String> USER_ID = ScopedValue.newInstance();
+
+    public static void main(String[] args) {
+        // Step 2: Bind the Scoped Value
+        ScopedValue.where(USER_ID, "User-123").run(() -> {
+            processRequest();
+        });
+    }
+
+    // Step 3: Access the Scoped Value
+    static void processRequest() {
+        System.out.println("Processing for User ID: " + USER_ID.get());
+    }
+}
+
+
+✅ Data is immutable, so no accidental modification can occur.
+✅ Value is available only within the scope where it's bound.
+
+🔥 Key Benefits of Scoped Values
+✅ No risk of memory leaks (like ThreadLocal).
+✅ Perfect for immutable data shared across threads.
+✅ Improved performance in concurrent environments.
+✅ Ideal for request tracking, audit logs, and session management.

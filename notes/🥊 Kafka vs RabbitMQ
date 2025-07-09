@@ -1,0 +1,12 @@
+🥊 Kafka vs RabbitMQ: TL;DR
+Feature	🐇 RabbitMQ	🧱 Kafka
+Type	Message Broker (Queue-based)	Distributed Event Log (Stream-based)
+Message Routing	Advanced (exchanges, bindings)	Simple (topics + partitions)
+Durability	Good (persistent queues)	Very high (commit logs, replication)
+Latency	Low	Slightly higher (high throughput)
+Ordering	Per queue	Per partition
+Retries & Dead Lettering	Built-in	Manual (or use Kafka Streams)
+Replay Messages	Not easy	Native replay via offsets
+Use Case Fit	Task queues, short jobs	Event streaming, analytics, audit
+Delivery Guarantees	At-most, At-least, Exactly-once*	At-least, Exactly-once (with Kafka Streams)
+UI Tools	RabbitMQ Management UI	Kafka Manager, Confluent, AKHQ

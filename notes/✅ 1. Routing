@@ -1,0 +1,111 @@
+✅ 1. Routing
+Route incoming requests to specific services.
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**
+
+            This routes any request like /api/users/* to the User Service registered with Eureka.
+
+
+            ⚖️ 2. Load Balancing
+Handled via service discovery (Eureka) and lb:// URI scheme.
+uri: lb://ORDER-SERVICE
+
+lb:// enables client-side load balancing using Spring Cloud LoadBalancer with Eureka.
+
+
+
+🔐 3. Authentication & Authorization
+You can use a filter to validate JWT tokens.
+
+Custom Global Filter (JWT Validation):
+
+
+@Component
+public class AuthFilter implements GlobalFilter {
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        String token = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (token == null || !token.startsWith("Bearer ")) {
+            exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            return exchange.getResponse().setComplete();
+        }
+        // Validate token here...
+        return chain.filter(exchange);
+    }
+}
+
+
+🚦 4. Rate Limiting
+Spring Cloud Gateway supports Redis-based rate limiting.
+Limits to 5 requests per second with a burst capacity of 10. Requires Redis.
+
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 5
+                redis-rate-limiter.burstCapacity: 10
+
+
+
+🧩 6. Request Aggregation
+Manually aggregate responses from multiple services using a custom controller in the Gateway.
+
+
+@RestController
+public class AggregationController {
+    private final WebClient webClient;
+
+    public AggregationController(WebClient.Builder builder) {
+        this.webClient = builder.baseUrl("http://localhost:8080").build();
+    }
+
+    @GetMapping("/aggregate")
+    public Mono<Map<String, Object>> aggregate() {
+        Mono<String> user = webClient.get().uri("http://user-service/api/users/1").retrieve().bodyToMono(String.class);
+        Mono<String> order = webClient.get().uri("http://order-service/api/orders/user/1").retrieve().bodyToMono(String.class);
+        return Mono.zip(user, order).map(tuple -> Map.of("user", tuple.getT1(), "orders", tuple.getT2()));
+    }
+}
+
+⛑️ 7. Fallback Handling
+Use Circuit Breaker with a fallback endpoint.
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: orderServiceCircuit
+                fallbackUri: forward:/fallback/orders
+
+                @RestController
+public class FallbackController {
+    @GetMapping("/fallback/orders")
+    public ResponseEntity<String> orderFallback() {
+        return ResponseEntity.ok("Order Service is temporarily unavailable.");
+    }
+}
+
+

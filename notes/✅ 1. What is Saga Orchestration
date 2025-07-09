@@ -1,0 +1,92 @@
+✅ 1. What is Saga Orchestration?
+In Saga Orchestration, a central orchestrator (usually one service) manages the complete transaction and coordinates the steps across microservices. If any step fails, it triggers compensating actions to rollback previous steps.
+
+
+🧠 Real-world Example
+Let’s say you're building an e-commerce app:
+
+OrderService: Create an order
+
+PaymentService: Deduct the amount
+
+InventoryService: Reduce item stock
+
+If inventory update fails, you need to rollback:
+
+Refund payment
+
+Cancel the order
+
+⚙️ Architecture Diagram
+
+
++------------------+
+|  Order Service   |  ← Orchestrator
++------------------+
+        |
+        v
++------------------+     Success   +------------------+
+| Payment Service  | ------------> | Inventory Service |
++------------------+               +------------------+
+        |                              |
+        v (on failure)                v (on failure)
++------------------+         +----------------------+
+| Cancel Payment   |         | Revert Inventory     |
++------------------+         +----------------------+
+
+
+
+
+
+🧩 CQRS – Command Query Responsibility Segregation
+Definition:
+CQRS separates read (query) operations from write (command) operations in a system.
+
+🔸 Why Use CQRS?
+Optimizes reads and writes separately.
+
+Helps scale complex systems.
+
+Enables different models for update and read (denormalized reads, aggregates for writes).
+
+Makes it easier to apply business rules and validations.
+
+🔁 Event Sourcing – Store state changes as a sequence of events
+Definition:
+Instead of storing the current state of data (like in a traditional DB), Event Sourcing stores all state-changing events (like AccountCreated, MoneyDeposited, etc.) in an append-only event store.
+
+🔸 Why Use Event Sourcing?
+Every change is traceable (audit/history).
+
+Easy to rebuild current state from events.
+
+Enables temporal querying (e.g., what was the balance yesterday?).
+
+🔄 CQRS + Event Sourcing Together
+Together, they provide:
+
+A write model that uses commands → events.
+
+A read model that is built using event handlers (projections).
+
+Full audit trail from event sourcing.
+
+🏦 Example: Banking System (Money Transfer)
+✅ Use Case:
+User creates an account.
+
+Deposits or withdraws money.
+
+Reads current balance.
+
+
+✅ 1. Strangler Fig Pattern
+🧠 Concept:
+Gradually replace a monolith or legacy system with new microservices. Requests are routed through an API Gateway which diverts them to either the old system or the new service depending on the route.
+
+🔧 Use Case:
+Replace /users API in a monolith with a new microservice.
+
+✅ 2. Bulkhead Pattern
+🧠 Concept:
+Isolate critical parts of your application to prevent failure in one part from cascading across the system (like watertight compartments in a ship).

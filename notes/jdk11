@@ -1,0 +1,140 @@
+
+Java 10 was the last free Oracle JDK release that we could use commercially without a license. Starting with Java 11, there’s no free long-term support (LTS) from Oracle.
+
+1️⃣ Running Java Files Without Compilation (java file.java)
+✅ Java 11 allows you to run .java files directly without manually compiling them.
+Run directly (without javac):
+java Hello.java
+
+
+2️⃣ var in Lambda Expressions
+✅ Java 11 allows using var in lambda expressions for explicit type inference.
+import java.util.List;
+
+public class VarLambdaExample {
+    public static void main(String[] args) {
+        List<String> names = List.of("Alice", "Bob", "Charlie");
+
+        names.forEach((var name) -> System.out.println(name.toUpperCase()));
+    }
+}
+
+ Benefit: Improves readability, and allows adding annotations in lambda parameters.
+
+ 3️⃣ New String Methods
+✅ Java 11 added new helper methods to String.
+
+public class StringMethodsExample {
+    public static void main(String[] args) {
+        // 1. isBlank() - Checks if string contains only whitespace
+        System.out.println("  ".isBlank()); // true
+
+        // 2. strip() - Removes leading and trailing spaces (better than trim)
+        System.out.println("  Hello  ".strip()); // "Hello"
+
+        // 3. repeat() - Repeats a string multiple times
+        System.out.println("Java ".repeat(3)); // "Java Java Java "
+
+        // 4. lines() - Converts multi-line string into a Stream
+        "Line1\nLine2\nLine3".lines().forEach(System.out::println);
+    }
+}
+
+
+🔹 Benefit: Makes common string operations easier and more efficient.
+
+
+
+4️⃣ Files.writeString() and Files.readString()
+✅ Simplifies file read/write operations.
+
+import java.nio.file.*;
+
+public class FileExample {
+    public static void main(String[] args) throws Exception {
+        Path filePath = Path.of("sample.txt");
+
+        // Write content to file
+        Files.writeString(filePath, "Hello, Java 11!");
+
+        // Read content from file
+        String content = Files.readString(filePath);
+        System.out.println(content); // Output: Hello, Java 11!
+    }
+}
+🔹 Benefit: Reduces boilerplate compared to traditional file handling (BufferedReader/Writer).
+
+
+
+5️⃣ Collection Enhancements (copyOf() method)
+✅ Introduces immutable copies of collections.
+
+import java.util.*;
+
+public class CollectionExample {
+    public static void main(String[] args) {
+        List<String> list = List.of("Apple", "Banana", "Cherry");
+        List<String> copyList = List.copyOf(list);
+
+        System.out.println(copyList);
+    }
+}
+🔹 Benefit: Prevents accidental modification of collections.
+
+
+6️⃣ Optional API Enhancements
+✅ New methods isEmpty(), orElseThrow() added to Optional<T>.
+
+import java.util.Optional;
+
+public class OptionalExample {
+    public static void main(String[] args) {
+        Optional<String> name = Optional.of("Java 11");
+
+        // 1. isEmpty() - Checks if the Optional is empty
+        System.out.println(name.isEmpty()); // false
+
+        // 2. orElseThrow() - Throws an exception if value is absent
+        System.out.println(name.orElseThrow()); // "Java 11"
+    }
+}
+🔹 Benefit: Provides a cleaner way to handle Optional values.
+
+7️⃣ HTTP Client (Standardized from Java 9)
+✅ Introduces a modern, async HTTP client in java.net.http.
+
+import java.net.http.*;
+import java.net.URI;
+import java.io.IOException;
+
+public class HttpClientExample {
+    public static void main(String[] args) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("https://jsonplaceholder.typicode.com/posts/1"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println(response.body());
+    }
+}
+ Benefit: Replaces old HttpURLConnection with a modern API for sync/async requests.
+
+
+
+ 8️⃣ ZGC – Low-Latency Garbage Collector
+✅ Java 11 introduced ZGC (Z Garbage Collector) for low-latency applications.
+✅ To enable ZGC, run Java with:
+
+java -XX:+UnlockExperimentalVMOptions -XX:+UseZGC MyApp.java
+🔹 Benefit: Optimized for high-throughput, low-latency applications (e.g., microservices).
+
+
+9️⃣ Flight Recorder & Mission Control (JEP 328)
+✅ Built-in monitoring tool for performance analysis
+✅ Helps analyze memory, CPU, thread dumps
+✅ Run Java with Flight Recorder:
+
+java -XX:+FlightRecorder -XX:StartFlightRecording=duration=60s,filename=recording.jfr MyApp
+🔹 Benefit: Ideal for debugging performance issues in production environments.
