@@ -3,7 +3,6 @@ brew install elastic/tap/elasticsearch-full
 elasticsearch
 curl http://localhost:9200
 
-
 brew install elastic/tap/kibana-full
 
 kibana
